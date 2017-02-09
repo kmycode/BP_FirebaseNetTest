@@ -1,0 +1,33 @@
+﻿<Window x:Class="FirebaseNetTest.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FirebaseNetTest.WPF"
+        xmlns:vm="clr-namespace:FirebaseNetTest.Shared.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" FontSize="16">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label Content="メールアドレス" Grid.Column="0" Grid.Row="0"/>
+        <TextBox Text="{Binding Email}" Grid.Column="1" Grid.Row="0"/>
+        <Label Content="パスワード" Grid.Column="0" Grid.Row="1"/>
+        <TextBox Text="{Binding Password}" Grid.Column="1" Grid.Row="1"/>
+        <Button Content="ユーザ作成" Command="{Binding SignUpCommand}" Grid.Column="0" Grid.Row="2"/>
+        <Button Content="ログイン" Command="{Binding SignInCommand}" Grid.Column="1" Grid.Row="2"/>
+        <Label Content="{Binding AuthMessage}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
+    </Grid>
+</Window>

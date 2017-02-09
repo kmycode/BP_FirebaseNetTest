@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FirebaseNetTest.Shared.ViewModels"
+             x:Class="FirebaseNetTest.MainPage">
+  <ContentPage.BindingContext>
+    <vm:MainViewModel/>
+  </ContentPage.BindingContext>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+    <Label Text="メールアドレス" Grid.Column="0" Grid.Row="0"/>
+    <Entry Text="{Binding Email}" Grid.Column="1" Grid.Row="0"/>
+    <Label Text="パスワード" Grid.Column="0" Grid.Row="1"/>
+    <Entry Text="{Binding Password}" Grid.Column="1" Grid.Row="1"/>
+    <Button Text="ユーザ作成" Command="{Binding SignUpCommand}" Grid.Column="0" Grid.Row="2"/>
+    <Button Text="ログイン" Command="{Binding SignInCommand}" Grid.Column="1" Grid.Row="2"/>
+    <Label Text="{Binding AuthMessage}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
+  </Grid>
+</ContentPage>
