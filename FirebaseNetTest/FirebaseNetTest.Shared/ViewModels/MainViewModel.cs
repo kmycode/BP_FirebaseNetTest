@@ -59,6 +59,47 @@ namespace FirebaseNetTest.Shared.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// ストレージのファイルパス
+		/// </summary>
+		public string StorageFilePath
+		{
+			get
+			{
+				return this._firebaseModel.StorageFilePath;
+			}
+			set
+			{
+				this._firebaseModel.StorageFilePath = value;
+			}
+		}
+
+		/// <summary>
+		/// ストレージに保存するテキスト
+		/// </summary>
+		public string StorageSaveText
+		{
+			get
+			{
+				return this._firebaseModel.StorageSaveText;
+			}
+			set
+			{
+				this._firebaseModel.StorageSaveText = value;
+			}
+		}
+
+		/// <summary>
+		/// ストレージの操作の結果メッセージ
+		/// </summary>
+		public string StorageMessage
+		{
+			get
+			{
+				return this._firebaseModel.StorageMessage;
+			}
+		}
+
 		#endregion
 
 		#region コマンド
@@ -92,6 +133,38 @@ namespace FirebaseNetTest.Shared.ViewModels
 			}
 		}
 		private RelayCommand _signUpCommand;
+
+		/// <summary>
+		/// ストレージにアップロード
+		/// </summary>
+		public RelayCommand StorageUploadCommand
+		{
+			get
+			{
+				return this._storageUploadCommand = this._storageUploadCommand ?? new RelayCommand(async () =>
+				{
+					await this._firebaseModel.UploadTextToStorageAsync();
+					//await this._firebaseModel.UploadFileToStorageAsync();
+				});
+			}
+		}
+		private RelayCommand _storageUploadCommand;
+
+		/// <summary>
+		/// ストレージからダウンロード
+		/// </summary>
+		public RelayCommand StorageDownloadCommand
+		{
+			get
+			{
+				return this._storageDownloadCommand = this._storageDownloadCommand ?? new RelayCommand(async () =>
+				{
+					await this._firebaseModel.DownloadTextFromStorageAsync();
+					//await this._firebaseModel.DownloadFileFromStorageAsync();
+				});
+			}
+		}
+		private RelayCommand _storageDownloadCommand;
 
 		#endregion
 

@@ -6,12 +6,17 @@
         xmlns:local="clr-namespace:FirebaseNetTest.WPF"
         xmlns:vm="clr-namespace:FirebaseNetTest.Shared.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" FontSize="16">
+        Title="MainWindow" Height="450" Width="825" FontSize="16">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -22,6 +27,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        
         <Label Content="メールアドレス" Grid.Column="0" Grid.Row="0"/>
         <TextBox Text="{Binding Email}" Grid.Column="1" Grid.Row="0"/>
         <Label Content="パスワード" Grid.Column="0" Grid.Row="1"/>
@@ -29,5 +35,13 @@
         <Button Content="ユーザ作成" Command="{Binding SignUpCommand}" Grid.Column="0" Grid.Row="2"/>
         <Button Content="ログイン" Command="{Binding SignInCommand}" Grid.Column="1" Grid.Row="2"/>
         <Label Content="{Binding AuthMessage}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
+
+        <Label Content="ストレージ参照パス" Grid.Column="0" Grid.Row="5"/>
+        <TextBox Text="{Binding StorageFilePath}" Grid.Column="1" Grid.Row="5"/>
+        <Label Content="保存するテキスト" Grid.Column="0" Grid.Row="6"/>
+        <TextBox Text="{Binding StorageSaveText}" Grid.Column="1" Grid.Row="6"/>
+        <Button Content="アップロード" Command="{Binding StorageUploadCommand}" Grid.Column="0" Grid.Row="7"/>
+        <Button Content="ダウンロード" Command="{Binding StorageDownloadCommand}" Grid.Column="1" Grid.Row="7"/>
+        <Label Content="{Binding StorageMessage}" Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
