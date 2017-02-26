@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FirebaseNetTest.WPF"
         xmlns:vm="clr-namespace:FirebaseNetTest.Shared.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="825" FontSize="16">
+        Title="MainWindow" Height="550" Width="825" FontSize="16">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
@@ -19,6 +19,14 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -36,6 +44,7 @@
         <Button Content="ログイン" Command="{Binding SignInCommand}" Grid.Column="1" Grid.Row="2"/>
         <Label Content="{Binding AuthMessage}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
 
+        <!--
         <Label Content="ストレージ参照パス" Grid.Column="0" Grid.Row="5"/>
         <TextBox Text="{Binding StorageFilePath}" Grid.Column="1" Grid.Row="5"/>
         <Label Content="保存するテキスト" Grid.Column="0" Grid.Row="6"/>
@@ -43,5 +52,18 @@
         <Button Content="アップロード" Command="{Binding StorageUploadCommand}" Grid.Column="0" Grid.Row="7"/>
         <Button Content="ダウンロード" Command="{Binding StorageDownloadCommand}" Grid.Column="1" Grid.Row="7"/>
         <Label Content="{Binding StorageMessage}" Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2"/>
+        -->
+
+        <Label Content="データベース参照パス" Grid.Column="0" Grid.Row="10"/>
+        <TextBox Text="{Binding DatabasePath}" Grid.Column="1" Grid.Row="10"/>
+        <Label Content="保存するテキスト" Grid.Column="0" Grid.Row="11"/>
+        <TextBox Text="{Binding DatabaseSaveText}" Grid.Column="1" Grid.Row="11"/>
+        <Button Content="アップロード" Command="{Binding DatabaseUploadCommand}" Grid.Column="0" Grid.Row="12"/>
+        <Button Content="ダウンロード" Command="{Binding DatabaseDownloadCommand}" Grid.Column="1" Grid.Row="12"/>
+        <Label Content="{Binding DatabaseMessage}" Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="2"/>
+
+        <ComboBox ItemsSource="{Binding DatabaseDatas}" Grid.Column="0" Grid.Row="15"/>
+        <Button Content="リストをダウンロード" Command="{Binding DatabaseDownloadListCommand}" Grid.Column="1" Grid.Row="15"/>
+        <Label Content="{Binding RealtimeDatabaseValue}" Grid.Column="0" Grid.Row="16" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

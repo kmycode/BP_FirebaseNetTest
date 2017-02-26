@@ -7,8 +7,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Database.Query;
 using Firebase.Storage;
 using PCLStorage;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace FirebaseNetTest.Shared.Models
 {
@@ -136,6 +140,103 @@ namespace FirebaseNetTest.Shared.Models
 		}
 		private string _storageMessage;
 
+		/// <summary>
+		/// データベースで参照するパス
+		/// </summary>
+		public string DatabasePath
+		{
+			get
+			{
+				return this._databasePath;
+			}
+			set
+			{
+				if (this._databasePath != value)
+				{
+					this._databasePath = value;
+					this.OnPropertyChanged();
+				}
+			}
+		}
+		private string _databasePath = "sample/path";
+
+		/// <summary>
+		/// データベースに保存するテキスト
+		/// </summary>
+		public string DatabaseSaveText
+		{
+			get
+			{
+				return this._databaseSaveText;
+			}
+			set
+			{
+				if (this._databaseSaveText != value)
+				{
+					this._databaseSaveText = value;
+					this.OnPropertyChanged();
+				}
+			}
+		}
+		private string _databaseSaveText = "異世界に行きたい";
+
+		/// <summary>
+		/// データベース操作のメッセージ
+		/// </summary>
+		public string DatabaseMessage
+		{
+			get
+			{
+				return this._databaseMessage;
+			}
+			private set
+			{
+				if (this._databaseMessage != value)
+				{
+					this._databaseMessage = value;
+					this.OnPropertyChanged();
+				}
+			}
+		}
+		private string _databaseMessage;
+
+		/// <summary>
+		/// データベースにあるデータ
+		/// </summary>
+		public ICollection<string> DatabaseDatas
+		{
+			get
+			{
+				return this._databaseDatas;
+			}
+			set
+			{
+				this._databaseDatas = value;
+				this.OnPropertyChanged();
+			}
+		}
+		private ICollection<string> _databaseDatas;
+
+		/// <summary>
+		/// リアルおままごとの値
+		/// </summary>
+		public string RealtimeDatabaseValue
+		{
+			get
+			{
+				return this._realtimeDatabaseValue;
+			}
+			private set
+			{
+				if (this._realtimeDatabaseValue != value)
+				{
+					this._realtimeDatabaseValue = value;
+					this.OnPropertyChanged();
+				}
+			}
+		}
+		private string _realtimeDatabaseValue;
+
 		#endregion
 
 		#region 変数
@@ -144,6 +245,11 @@ namespace FirebaseNetTest.Shared.Models
 		/// Firebase認証へのリンク
 		/// </summary>
 		private FirebaseAuthLink _authLink;
+
+		/// <summary>
+		/// リアルタイムでのデータベース監視をおこなうインスタンス（を破棄する権限を持つインスタンス）
+		/// </summary>
+		private IDisposable _realtimeDatabaseWatcher;
 
 		#endregion
 
@@ -163,6 +269,9 @@ namespace FirebaseNetTest.Shared.Models
 				this._authLink = await auth.SignInWithEmailAndPasswordAsync(this.Email, this.Password);
 
 				this.AuthMessage = "サインインに成功しました";
+
+				// データベースの監視を開始
+				this.StartWatchingRealtimeValue();
 			}
 			catch (FirebaseAuthException ex)
 			{
@@ -316,7 +425,156 @@ namespace FirebaseNetTest.Shared.Models
 					// 認証の時に手に入れたリンクからトークンを抜く
 					AuthTokenAsyncFactory = () => Task.FromResult(this._authLink?.FirebaseToken),
 				})
-				.Child(path ?? this.StorageFilePath);		// 参照先パス（フォルダ名、ファイル名）
+				.Child(path ?? this.StorageFilePath);       // 参照先パス（フォルダ名、ファイル名）
+		}
+
+		/// <summary>
+		/// データベースにテキストを保存
+		/// </summary>
+		public async Task UploadTextToDatabaseAsync()
+		{
+			try
+			{
+				// クエリを取得
+				var query = this.GetDatabaseQuery();
+
+				// データを格納する
+				await query.PostAsync(new DatabaseData { Value = this.DatabaseSaveText, });
+
+				this.DatabaseMessage = "データ保存に成功しました";
+			}
+			catch (FirebaseException ex)
+			{
+				this.DatabaseMessage = "エラー発生しました！：" + ex.ResponseData;
+			}
+			catch
+			{
+				this.DatabaseMessage = "エラー発生しました！";
+			}
+		}
+
+		/// <summary>
+		/// データベースからテキストをダウンロード
+		/// </summary>
+		public async Task DownloadTextFromDatabaseAsync()
+		{
+			try
+			{
+				// クエリを取得
+				var query = this.GetDatabaseQuery();
+
+				// データを取得する
+				var results = await query.OnceAsync<DatabaseData>();
+				var resultObjects = results.Select(obj => obj.Object);
+
+				this.DatabaseMessage = "取得完了：" + resultObjects.First().Value;
+			}
+			catch (FirebaseException ex)
+			{
+				this.DatabaseMessage = "エラー発生しました！：" + ex.ResponseData;
+			}
+			catch
+			{
+				this.DatabaseMessage = "エラー発生しました！";
+			}
+		}
+
+		/// <summary>
+		/// データベースからテキストをダウンロードしてリストを作成
+		/// </summary>
+		public async Task DownloadTextListFromDatabaseAsync()
+		{
+			try
+			{
+				// クエリを取得
+				var query = this.GetDatabaseQuery();
+
+				// データを取得する
+				var results = await query
+					.OrderBy("Value")
+					.LimitToFirst(3)
+					.OnceAsync<DatabaseData>();
+				var resultObjects = results.Select(obj => obj.Object);
+
+				// 値をリストに設定
+				this.DatabaseDatas.Clear();
+				foreach (var obj in resultObjects)
+				{
+					this.DatabaseDatas.Add(obj.Value);
+				}
+
+				this.DatabaseMessage = "データをリストに入れました：" + this.DatabaseDatas.Count;
+			}
+			catch (FirebaseException ex)
+			{
+				this.DatabaseMessage = "エラー発生しました！：" + ex.ResponseData;
+			}
+			catch
+			{
+				this.DatabaseMessage = "エラー発生しました！";
+			}
+		}
+
+		/// <summary>
+		/// リアルタイムのデータ監視を開始
+		/// </summary>
+		public void StartWatchingRealtimeValue()
+		{
+			// データベースの監視を開始
+			this._realtimeDatabaseWatcher =
+				this.GetDatabaseQuery("sample/path")
+				.AsObservable<DatabaseData>()
+				.Subscribe(ev =>
+				{
+					if (ev?.Object != null)
+					{
+						switch (ev.EventType)
+						{
+							case Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate:
+								this.RealtimeDatabaseValue = "監視: 値 " + ev.Object.Value + " が追加されました";
+								break;
+							case Firebase.Database.Streaming.FirebaseEventType.Delete:
+								this.RealtimeDatabaseValue = "監視: 値 " + ev.Object.Value + " が削除されました";
+								break;
+						}
+					}
+				});
+
+			// 監視を中止（なぜDisposeなのか詳しいことはRxの勉強へGo!）
+			// this._realtimeDatabaseWatcher.Dispose();
+		}
+
+		/// <summary>
+		/// データベースのクエリを取得
+		/// </summary>
+		/// <returns>設定値に応じたデータベースへの参照</returns>
+		private ChildQuery GetDatabaseQuery(string path = null)
+		{
+			if (this._authLink == null)
+			{
+				throw new NullReferenceException();
+			}
+			return new FirebaseClient(
+				// FirebaseコンソールのWeb APIのとこに書いてあった、firebaseio.comでおわるやつ
+				FirebaseToken.DatabaseUrl,
+				new FirebaseOptions
+				{
+					// 認証の時に手に入れたリンクからトークンを抜く
+					AuthTokenAsyncFactory = () => Task.FromResult(this._authLink.FirebaseToken),
+				})
+				.Child(path ?? this.DatabasePath);		// 参照先パス
+		}
+
+		#endregion
+
+		#region 構造体定義
+
+		/// <summary>
+		/// 文字列型のラッパ
+		/// </summary>
+		public class DatabaseData
+		{
+			public string Value { get; set; }
 		}
 
 		#endregion

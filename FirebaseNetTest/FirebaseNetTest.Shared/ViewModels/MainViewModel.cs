@@ -100,6 +100,69 @@ namespace FirebaseNetTest.Shared.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// データベースで参照するパス
+		/// </summary>
+		public string DatabasePath
+		{
+			get
+			{
+				return this._firebaseModel.DatabasePath;
+			}
+			set
+			{
+				this._firebaseModel.DatabasePath = value;
+			}
+		}
+
+		/// <summary>
+		/// データベースに保存するテキスト
+		/// </summary>
+		public string DatabaseSaveText
+		{
+			get
+			{
+				return this._firebaseModel.DatabaseSaveText;
+			}
+			set
+			{
+				this._firebaseModel.DatabaseSaveText = value;
+			}
+		}
+
+		/// <summary>
+		/// データベース操作のメッセージ
+		/// </summary>
+		public string DatabaseMessage
+		{
+			get
+			{
+				return this._firebaseModel.DatabaseMessage;
+			}
+		}
+
+		/// <summary>
+		/// データベースのデータ
+		/// </summary>
+		public ICollection<string> DatabaseDatas
+		{
+			get
+			{
+				return this._firebaseModel.DatabaseDatas;
+			}
+		}
+
+		/// <summary>
+		/// データベースの値をリアルタイムで更新
+		/// </summary>
+		public string RealtimeDatabaseValue
+		{
+			get
+			{
+				return this._firebaseModel.RealtimeDatabaseValue;
+			}
+		}
+
 		#endregion
 
 		#region コマンド
@@ -165,6 +228,52 @@ namespace FirebaseNetTest.Shared.ViewModels
 			}
 		}
 		private RelayCommand _storageDownloadCommand;
+
+		/// <summary>
+		/// データベースにアップロード
+		/// </summary>
+		public RelayCommand DatabaseUploadCommand
+		{
+			get
+			{
+				return this._databaseUploadCommand = this._databaseUploadCommand ?? new RelayCommand(async () =>
+				{
+					await this._firebaseModel.UploadTextToDatabaseAsync();
+					//await this._firebaseModel.UploadFileToDatabaseAsync();
+				});
+			}
+		}
+		private RelayCommand _databaseUploadCommand;
+
+		/// <summary>
+		/// データベースからダウンロード
+		/// </summary>
+		public RelayCommand DatabaseDownloadCommand
+		{
+			get
+			{
+				return this._databaseDownloadCommand = this._databaseDownloadCommand ?? new RelayCommand(async () =>
+				{
+					await this._firebaseModel.DownloadTextFromDatabaseAsync();
+				});
+			}
+		}
+		private RelayCommand _databaseDownloadCommand;
+
+		/// <summary>
+		/// データベースからダウンロード
+		/// </summary>
+		public RelayCommand DatabaseDownloadListCommand
+		{
+			get
+			{
+				return this._databaseDownloadListCommand = this._databaseDownloadListCommand ?? new RelayCommand(async () =>
+				{
+					await this._firebaseModel.DownloadTextListFromDatabaseAsync();
+				});
+			}
+		}
+		private RelayCommand _databaseDownloadListCommand;
 
 		#endregion
 
